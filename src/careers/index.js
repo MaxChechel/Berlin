@@ -30,20 +30,8 @@ function textIntoView(selector, trigger) {
     stagger: { each: 0.025 },
   });
 }
-//Window to top on page refresh
-function toPageTop() {
-  let isRefreshing = false;
-  window.addEventListener("beforeunload", function () {
-    isRefreshing = true;
-  });
-  window.addEventListener("unload", function () {
-    if (isRefreshing) {
-      window.scrollTo(0, 0);
-    }
-  });
-}
+
 document.addEventListener("DOMContentLoaded", () => {
-  toPageTop();
   const splittWords = new SplitType(
     ".wave-text, h1, .positions_content h2, .section_positions h3, .positions-items h4, .careers_component .positions_content p, [data-positions='text']",
     {

@@ -587,71 +587,14 @@ var _scrollTriggerDefault = parcelHelpers.interopDefault(_scrollTrigger);
 var _splitType = require("split-type");
 var _splitTypeDefault = parcelHelpers.interopDefault(_splitType);
 (0, _gsapDefault.default).registerPlugin((0, _scrollTriggerDefault.default));
-function wrapLines(selector) {
-    document.querySelectorAll(selector).forEach((line)=>{
-        const wrapEl = document.createElement("div");
-        wrapEl.classList = "overflow-hidden";
-        line.parentNode.appendChild(wrapEl);
-        wrapEl.appendChild(line);
-    });
-}
-//Window to top on page refresh
-function toPageTop() {
-    let isRefreshing = false;
-    window.addEventListener("beforeunload", function() {
-        isRefreshing = true;
-    });
-    window.addEventListener("unload", function() {
-        if (isRefreshing) window.scrollTo(0, 0);
-    });
-}
+let mm = (0, _gsapDefault.default).matchMedia();
 document.addEventListener("DOMContentLoaded", ()=>{
-    toPageTop();
-    const splittWords = new (0, _splitTypeDefault.default)(".wave-text, .section_work-hero h1", {
+    const splittWords = new (0, _splitTypeDefault.default)(" h1, .wave-title-container h3, .section_header h3, .section_header p", {
         types: "lines, words"
     });
-    wrapLines(".section_work-hero h1 .line");
-    function underlineTitle(target) {
-        target = document.querySelectorAll(target);
-        target.forEach((el)=>{
-            //Target first matched heading
-            const heading = el.querySelector("h1, h2, h3, h4, h5, h6");
-            //Split heading into lines and words
-            const text = new (0, _splitTypeDefault.default)(heading, {
-                types: "lines, words"
-            });
-            //Wrap words into 1 parent span
-            text.lines.forEach((line)=>{
-                const wrapperSpan = document.createElement("span");
-                const words = line.querySelectorAll(".word");
-                words.forEach((word)=>{
-                    wrapperSpan.appendChild(word);
-                });
-                line.innerHTML = "";
-                line.appendChild(wrapperSpan);
-            });
-            el.addEventListener("mouseenter", ()=>{
-                (0, _gsapDefault.default).to(heading.querySelectorAll(".line span"), {
-                    "--line-width": "100%",
-                    ease: "power3.out",
-                    duration: 0.6,
-                    stagger: {
-                        each: 0.1
-                    }
-                });
-            });
-            el.addEventListener("mouseleave", ()=>{
-                (0, _gsapDefault.default).to(heading.querySelectorAll(".line span"), {
-                    "--line-width": "0%",
-                    duration: 0.6,
-                    stagger: {
-                        each: 0.1
-                    }
-                });
-            });
-        });
-    }
-    underlineTitle(".featured-container");
+    wrapLines("h1 .line");
+    wrapLines(".section_header h3 .line");
+    wrapLines(".section_header p .line");
     function loaderSimple() {
         const loaderWrap = document.querySelector(".loader-page_component");
         const loaderLogo = loaderWrap.querySelector(".loader3_image");
@@ -666,49 +609,240 @@ document.addEventListener("DOMContentLoaded", ()=>{
             delay: 0.4,
             opacity: 0,
             duration: 0.6,
-            onComplete: pageLoadTl
+            onComplete: ()=>{
+                // Desktop
+                mm.add("(min-width: 700px)", ()=>{
+                    pageLoadDesktop();
+                });
+                //Mobile
+                mm.add("(max-width: 699px)", ()=>{
+                    pageLoadMobile();
+                });
+            }
         });
     }
     loaderSimple();
-    function pageLoadTl() {
-        const heroLoadTl = (0, _gsapDefault.default).timeline();
-        heroLoadTl.to(".wave-text .word", {
+    function wrapLines(selector) {
+        document.querySelectorAll(selector).forEach((line)=>{
+            const wrapEl = document.createElement("div");
+            wrapEl.classList = "overflow-hidden";
+            line.parentNode.appendChild(wrapEl);
+            wrapEl.appendChild(line);
+        });
+    }
+    function pageLoadDesktop() {
+        const heroTl = (0, _gsapDefault.default).timeline();
+        heroTl.to(".header5_background-image", {
             opacity: 1,
-            duration: 0.6,
+            scale: 1,
+            duration: 1.5
+        }).to("#client-name", {
+            opacity: 1,
+            duration: 1,
             y: "0%",
-            rotateX: 0,
-            transformOrigin: "center center"
-        }).to(".wave-title-container", {
-            delay: 0.2,
-            "--col2": "1fr",
-            duration: 3,
             ease: "power4.out"
-        }).to(".section_work-hero h1 .line", {
+        }, "<20%").to(" h1 .line", {
             opacity: 1,
-            duration: 0.6,
+            duration: 1.4,
             rotateX: 0,
             transformOrigin: "center center",
             y: "0%",
+            ease: "power4.out",
             stagger: {
                 each: 0.025
             }
-        }, "<20%").to(".filter_component", {
+        }, "<10%").to(".navbar1_component", {
             opacity: 1,
             y: "0%",
             duration: 1
-        }, "<0%").to(".work_item", {
-            opacity: 1,
-            y: "0%",
-            duration: 1,
-            stagger: {
-                each: 0.05
-            }
-        }, "<30%").to(".navbar1_component", {
-            opacity: 1,
-            y: "0%",
-            duration: 1
-        }, "<0%");
+        }, "<");
     }
+    function pageLoadMobile() {
+        const heroTl = (0, _gsapDefault.default).timeline();
+        heroTl.to(".header5_background-image", {
+            opacity: 1,
+            scale: 1,
+            duration: 1.5
+        }).to("#client-name", {
+            opacity: 1,
+            duration: 1,
+            y: "0%",
+            ease: "power4.out"
+        }, "<20%").to(" h1 .line", {
+            opacity: 1,
+            duration: 1.4,
+            rotateX: 0,
+            transformOrigin: "center center",
+            y: "0%",
+            ease: "power4.out",
+            stagger: {
+                each: 0.025
+            }
+        }, "<10%").to(".section_header h3 .line", {
+            opacity: 1,
+            duration: 1.4,
+            ease: "power4.out",
+            y: "0%",
+            rotateZ: 0,
+            transformOrigin: "left bottom",
+            stagger: {
+                each: 0.025
+            }
+        }, "<20%").to(".section_header p .line", {
+            opacity: 1,
+            duration: 2,
+            ease: "power4.out",
+            stagger: {
+                each: 0.025
+            }
+        }, "<20%").to(".section_header .headerwork_what-we-did", {
+            opacity: 1,
+            duration: 0.6,
+            y: "0%",
+            ease: "power4out"
+        }, "<2%").to(".navbar1_component", {
+            opacity: 1,
+            y: "0%",
+            duration: 1
+        }, "<");
+    }
+    //Quote
+    const quote = document.querySelector("#quote");
+    if (quote) {
+        const splittWords = new (0, _splitTypeDefault.default)("#quote h4", {
+            types: "lines, words"
+        });
+        wrapLines("#quote h4 .line");
+        const textIntoViewtl = (0, _gsapDefault.default).timeline({
+            scrollTrigger: {
+                trigger: quote,
+                start: "top 60%",
+                end: "top 40%"
+            }
+        });
+        textIntoViewtl.to("#quote-heading", {
+            opacity: 1,
+            duration: 1,
+            y: "0%",
+            ease: "power4.out"
+        }).to(quote.querySelectorAll("h4 .line"), {
+            opacity: 1,
+            duration: 1.4,
+            rotateX: 0,
+            transformOrigin: "center center",
+            y: "0%",
+            ease: "power4.out",
+            stagger: {
+                each: 0.025
+            }
+        }, "<20%");
+    }
+    mm.add("(min-width: 700px)", ()=>{
+        //Header
+        const headerRevealTl = (0, _gsapDefault.default).timeline({
+            scrollTrigger: {
+                trigger: ".section_header",
+                start: "top 60%",
+                end: "top 40%"
+            }
+        });
+        headerRevealTl.to(".section_header h3 .line", {
+            opacity: 1,
+            duration: 1.4,
+            ease: "power4.out",
+            y: "0%",
+            rotateZ: 0,
+            transformOrigin: "left bottom",
+            stagger: {
+                each: 0.025
+            }
+        }).to(".section_header p .line", {
+            opacity: 1,
+            duration: 2,
+            ease: "power4.out",
+            stagger: {
+                each: 0.025
+            }
+        }, "<20%").to(".section_header .headerwork_what-we-did", {
+            opacity: 1,
+            duration: 0.6,
+            y: "0%",
+            ease: "power4out"
+        }, "<2%");
+    });
+    //Images
+    const images = document.querySelectorAll(".gallery_image");
+    images.forEach((image)=>{
+        const imgRevealTl = (0, _gsapDefault.default).timeline({
+            scrollTrigger: {
+                trigger: image.closest("div"),
+                start: "top 60%",
+                end: "top 40%"
+            }
+        });
+        imgRevealTl.to(image, {
+            opacity: 1,
+            y: "0%",
+            scale: 1,
+            duration: 1.4
+        });
+    });
+    //Video reveal
+    const videos = document.querySelectorAll(".video_lightbox-image");
+    videos.forEach((video)=>{
+        const vidRevealTl = (0, _gsapDefault.default).timeline({
+            scrollTrigger: {
+                trigger: video.closest("div"),
+                start: "top 60%",
+                end: "top 40%"
+            }
+        });
+        vidRevealTl.to(video, {
+            opacity: 1,
+            y: "0%",
+            scale: 1,
+            duration: 1.4
+        }).to(video.querySelector("#fullscreen-button"), {
+            opacity: 1,
+            duration: 0.8
+        }, "<30%").to(video.querySelector("#custom-play-button"), {
+            opacity: 1,
+            duration: 0.8
+        }, "<0%");
+    });
+    //Work
+    const workRevealTl = (0, _gsapDefault.default).timeline({
+        scrollTrigger: {
+            trigger: ".section_work",
+            start: "top 60%",
+            end: "top 40%"
+        }
+    });
+    workRevealTl.to(".wave-title-container h3 .word", {
+        opacity: 1,
+        duration: 0.6,
+        y: "0%",
+        rotateX: 0,
+        transformOrigin: "center center"
+    }).to(".wave-title-container", {
+        delay: 0.2,
+        "--col2": "1fr",
+        duration: 2,
+        ease: "power4.out"
+    }).to(".work_item", {
+        opacity: 1,
+        y: "0%",
+        duration: 1,
+        ease: "power4.out",
+        stagger: {
+            each: 0.075
+        }
+    }, 0.6).to(".section_work .button", {
+        opacity: 1,
+        duration: 0.6,
+        y: "0%",
+        ease: "power4out"
+    }, "<10%");
 });
 
 },{"gsap":"fPSuC","gsap/src/ScrollTrigger":"3fjnC","split-type":"fvGAG","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fPSuC":[function(require,module,exports) {

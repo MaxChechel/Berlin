@@ -13,21 +13,7 @@ function wrapLines(selector) {
   });
 }
 
-//Window to top on page refresh
-function toPageTop() {
-  let isRefreshing = false;
-  window.addEventListener("beforeunload", function () {
-    isRefreshing = true;
-  });
-  window.addEventListener("unload", function () {
-    if (isRefreshing) {
-      window.scrollTo(0, 0);
-    }
-  });
-}
-
 document.addEventListener("DOMContentLoaded", () => {
-  toPageTop();
   const splittWords = new SplitType(
     ".wave-text, .shop-items_content h4, .shop-items_content p, .section_info-shop h2, .section_info-shop p",
     {

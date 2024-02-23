@@ -587,18 +587,7 @@ var _scrollTriggerDefault = parcelHelpers.interopDefault(_scrollTrigger);
 var _splitType = require("split-type");
 var _splitTypeDefault = parcelHelpers.interopDefault(_splitType);
 (0, _gsapDefault.default).registerPlugin((0, _scrollTriggerDefault.default));
-//Window to top on page refresh
-function toPageTop() {
-    let isRefreshing = false;
-    window.addEventListener("beforeunload", function() {
-        isRefreshing = true;
-    });
-    window.addEventListener("unload", function() {
-        if (isRefreshing) window.scrollTo(0, 0);
-    });
-}
 document.addEventListener("DOMContentLoaded", ()=>{
-    toPageTop();
     const splittWords = new (0, _splitTypeDefault.default)(" h1", {
         types: "lines, words"
     });

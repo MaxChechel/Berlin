@@ -588,18 +588,7 @@ var _all = require("gsap/all");
 var _splitType = require("split-type");
 var _splitTypeDefault = parcelHelpers.interopDefault(_splitType);
 (0, _gsapDefault.default).registerPlugin((0, _scrollTriggerDefault.default), (0, _all.Draggable));
-//Window to top on page refresh
-function toPageTop() {
-    let isRefreshing = false;
-    window.addEventListener("beforeunload", function() {
-        isRefreshing = true;
-    });
-    window.addEventListener("unload", function() {
-        if (isRefreshing) window.scrollTo(0, 0);
-    });
-}
 document.addEventListener("DOMContentLoaded", ()=>{
-    toPageTop();
     const splittWords = new (0, _splitTypeDefault.default)(".wave-text, .section_hero-about h1, .about_heading, .section_layout-shop h2, .values-container h4, .section_values h3, .section_values h4, .section_team h3, .section_team .heading-style-h4, .section_jobs h3, .section_clients h3", {
         types: "lines, words"
     });
@@ -807,14 +796,29 @@ document.addEventListener("DOMContentLoaded", ()=>{
             xPercent: -50,
             yPercent: -50
         });
-        document.addEventListener("pointermove", movecursor);
-        function movecursor(e) {
+        // Pointer move event to move the cursor
+        document.addEventListener("pointermove", moveCursor);
+        function moveCursor(e) {
             (0, _gsapDefault.default).to(cursor, {
                 duration: 0.5,
                 x: e.clientX,
                 y: e.clientY
             });
         }
+        // Pointer down event to scale down the cursor
+        document.addEventListener("pointerdown", function() {
+            (0, _gsapDefault.default).to(cursor, {
+                duration: 0.5,
+                scale: 0.8
+            });
+        });
+        // Pointer up event to scale the cursor back to normal
+        document.addEventListener("pointerup", function() {
+            (0, _gsapDefault.default).to(cursor, {
+                duration: 0.5,
+                scale: 1
+            });
+        });
     })();
     //Team
     const teamSwiper = new Swiper(".team-wrapper.swiper", {
@@ -906,61 +910,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
             from: "random"
         }
     }, "<20%");
-}); // const getMousePos = (e) => {
- //   return {
- //     x: e.clientX,
- //     y: e.clientY,
- //   };
- // };
- // // Linear interpolation
- // const lerp = (a, b, n) => (1 - n) * a + n * b;
- // //Grab mouse position and set it to mouse state
- // let mouse = { x: 0, y: 0 };
- // window.addEventListener("mousemove", (ev) => (mouse = getMousePos(ev)));
- // export default class Cursor {
- //   constructor(el) {
- //     this.Cursor = el;
- //     this.Cursor.style.opacity = 0;
- //     this.cursorCnfigs = {
- //       x: { previous: 0, current: 0, amt: 0.2 },
- //       y: { previous: 0, current: 0, amt: 0.2 },
- //     };
- //     this.onMouseMoveEv = () => {
- //       this.cursorCnfigs.x.previous = this.cursorCnfigs.x.current = mouse.x;
- //       this.cursorCnfigs.y.previous = this.cursorCnfigs.y.current = mouse.y;
- //       // Set cursor opacity to 1 when hovered on the screen
- //       gsap.to(this.Cursor, {
- //         duration: 1,
- //         ease: "Power3.easeInOut",
- //         opacity: 1,
- //       });
- //       //    requestAnimationFrame
- //       requestAnimationFrame(() => this.render());
- //       //    Cleanup function
- //       window.removeEventListener("mousemove", this.onMouseMoveEv);
- //     };
- //     //    Assign the mouse function
- //     window.addEventListener("mousemove", this.onMouseMoveEv);
- //   }
- //   render() {
- //     this.cursorCnfigs.x.current = mouse.x;
- //     this.cursorCnfigs.y.current = mouse.y;
- //     for (const key in this.cursorCnfigs) {
- //       this.cursorCnfigs[key].previous = lerp(
- //         this.cursorCnfigs[key].previous,
- //         this.cursorCnfigs[key].current,
- //         this.cursorCnfigs[key].amt
- //       );
- //     }
- //     //    setting the cursor x and y to our cursor html element
- //     this.Cursor.style.transform = `
- //         translateX(${this.cursorCnfigs.x.previous}px)
- //         translateY(${this.cursorCnfigs.y.previous}px)
- //         `;
- //     requestAnimationFrame(() => this.render());
- //   }
- // }
- // const cursor = new Cursor(document.querySelector(".custom-cursor"));
+});
 
 },{"gsap":"fPSuC","gsap/src/ScrollTrigger":"3fjnC","split-type":"fvGAG","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","gsap/all":"3UJRo"}],"fPSuC":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
