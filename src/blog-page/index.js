@@ -3,7 +3,7 @@ import ScrollTrigger from "gsap/src/ScrollTrigger";
 import SplitType from "split-type";
 
 gsap.registerPlugin(ScrollTrigger);
-
+let mm = gsap.matchMedia();
 document.addEventListener("DOMContentLoaded", () => {
   const splittWords = new SplitType(" h1", {
     types: "lines, words",
@@ -13,6 +13,47 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   wrapLines("h1 .line");
+
+  function singleUnderlineTitle(el) {
+    //Target first matched heading
+    const heading = el.querySelector("h1, h2, h3, h4, h5, h6");
+    //Split heading into lines and words
+    const text = new SplitType(heading, { types: "lines, words" });
+
+    //Wrap words into 1 parent span
+    text.lines.forEach((line) => {
+      const wrapEl = document.createElement("div");
+      wrapEl.classList = "overflow-hidden";
+      line.parentNode.appendChild(wrapEl);
+      wrapEl.appendChild(line);
+    });
+
+    el.addEventListener("mouseenter", () => {
+      gsap.to(heading.querySelectorAll(".line"), {
+        "--line-width": "100%",
+        ease: "power3.out",
+        duration: 0.6,
+        stagger: { each: 0.1 },
+      });
+    });
+    el.addEventListener("mouseleave", () => {
+      gsap.to(heading.querySelectorAll(".line"), {
+        "--line-width": "0%",
+        duration: 0.6,
+        stagger: { each: 0.1 },
+      });
+    });
+  }
+
+  function underlineTitle(target) {
+    target = document.querySelectorAll(target);
+    target.forEach((el) => {
+      singleUnderlineTitle(el);
+    });
+  }
+  mm.add("(hover:hover)", () => {
+    underlineTitle(".latest-card");
+  });
 
   function loaderSimple() {
     const loaderWrap = document.querySelector(".loader-page_component");
@@ -85,6 +126,14 @@ document.addEventListener("DOMContentLoaded", () => {
           y: "0%",
           scale: 1,
           duration: 1.5,
+        },
+        "<20%"
+      )
+      .to(
+        ".section_content",
+        {
+          opacity: 1,
+          duration: 0.8,
         },
         "<20%"
       )

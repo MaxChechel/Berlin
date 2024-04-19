@@ -176,41 +176,51 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   //Quote
-  const quote = document.querySelector("#quote");
-  if (quote) {
-    const splittWords = new SplitType("#quote h4", {
-      types: "lines, words",
-    });
-    wrapLines("#quote h4 .line");
+  const quotes = document.querySelectorAll("[data-animate-quote]");
+  quotes.forEach((quote) => {
+    if (quote) {
+      const splittWords = new SplitType(quote.querySelector("h4"), {
+        types: "lines, words",
+      });
+      const lines = quote.querySelectorAll("h4 .line");
+      const quoteHeading = quote.querySelector("#quote-heading");
 
-    const textIntoViewtl = gsap.timeline({
-      scrollTrigger: {
-        trigger: quote,
-        start: "top 60%",
-        end: "top 40%",
-      },
-    });
-    textIntoViewtl
-      .to("#quote-heading", {
-        opacity: 1,
-        duration: 1,
-        y: "0%",
-        ease: "power4.out",
-      })
-      .to(
-        quote.querySelectorAll("h4 .line"),
-        {
+      quote.querySelectorAll("h4 .line").forEach((line) => {
+        const wrapEl = document.createElement("div");
+        wrapEl.classList = "overflow-hidden";
+        line.parentNode.appendChild(wrapEl);
+        wrapEl.appendChild(line);
+      });
+
+      const textIntoViewtl = gsap.timeline({
+        scrollTrigger: {
+          trigger: quote,
+          start: "top 60%",
+          end: "top 40%",
+        },
+      });
+      textIntoViewtl
+        .to(quoteHeading, {
           opacity: 1,
-          duration: 1.4,
-          rotateX: 0,
-          transformOrigin: "center center",
+          duration: 1,
           y: "0%",
           ease: "power4.out",
-          stagger: { each: 0.025 },
-        },
-        "<20%"
-      );
-  }
+        })
+        .to(
+          lines,
+          {
+            opacity: 1,
+            duration: 1.4,
+            rotateX: 0,
+            transformOrigin: "center center",
+            y: "0%",
+            ease: "power4.out",
+            stagger: { each: 0.025 },
+          },
+          "<20%"
+        );
+    }
+  });
 
   mm.add("(min-width: 700px)", () => {
     //Header

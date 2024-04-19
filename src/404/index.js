@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "<20%"
       )
       .to(
-        ".button",
+        ".button_wrapper-inner",
         {
           opacity: 1,
           duration: 0.6,

@@ -4,7 +4,7 @@ import ScrollTrigger from "gsap/src/ScrollTrigger";
 import SplitType from "split-type";
 
 gsap.registerPlugin(ScrollTrigger, Flip);
-
+let mm = gsap.matchMedia();
 function wrapLines(selector) {
   document.querySelectorAll(selector).forEach((line) => {
     const wrapEl = document.createElement("div");
@@ -13,25 +13,45 @@ function wrapLines(selector) {
     wrapEl.appendChild(line);
   });
 }
+function singleUnderlineTitle(el) {
+  //Target first matched heading
+  const heading = el.querySelector("h1, h2, h3, h4, h5, h6");
+  //Split heading into lines and words
+  const text = new SplitType(heading, { types: "lines, words" });
 
-function footerReveal() {
-  imagesLoaded(".page-wrapper", () => {
-    const footerTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".footer_component",
-        start: "top 75%",
-        end: "top 50%",
-        once: true,
-      },
+  //Wrap words into 1 parent span
+  text.lines.forEach((line) => {
+    const wrapEl = document.createElement("div");
+    wrapEl.classList = "overflow-hidden";
+    line.parentNode.appendChild(wrapEl);
+    wrapEl.appendChild(line);
+  });
+
+  el.addEventListener("mouseenter", () => {
+    gsap.to(heading.querySelectorAll(".line"), {
+      "--line-width": "100%",
+      ease: "power3.out",
+      duration: 0.6,
+      stagger: { each: 0.1 },
     });
-    footerTl.to(".footer_logo-link", {
-      y: "0%",
-      opacity: 1,
-      ease: "power4.inOut",
-      duration: 1.8,
+  });
+  el.addEventListener("mouseleave", () => {
+    gsap.to(heading.querySelectorAll(".line"), {
+      "--line-width": "0%",
+      duration: 0.6,
+      stagger: { each: 0.1 },
     });
   });
 }
+
+function underlineTitle(target) {
+  target = document.querySelectorAll(target);
+  target.forEach((el) => {
+    singleUnderlineTitle(el);
+  });
+}
+
+underlineTitle(".latest-home_featured-item");
 
 function pageAnimations() {
   const splittWords = new SplitType(
@@ -45,54 +65,55 @@ function pageAnimations() {
   wrapLines(".section_header h2 .line");
   wrapLines(".section_header p .line");
 
-  //Video reveal
-  const vidRevealTl = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".video_component",
-      start: "top 60%",
-      end: "top 40%",
-    },
-  });
-  vidRevealTl
-    .to(".video_lightbox-image", {
-      opacity: 1,
-      y: "0%",
-      scale: 1,
-      duration: 1.4,
-    })
-    .to("#fullscreen-button", { opacity: 1, duration: 0.8 }, "<30%")
-    .to("#custom-play-button", { opacity: 1, duration: 0.8 }, "<0%");
+  // //Video reveal
+  // const vidRevealTl = gsap.timeline({
+  //   scrollTrigger: {
+  //     trigger: ".video_component",
+  //     start: "top 60%",
+  //     end: "top 40%",
+  //   },
+  // });
+  // vidRevealTl
+  //   .to(".video_lightbox-image", {
+  //     opacity: 1,
+  //     y: "0%",
+  //     scale: 1,
+  //     duration: 1.4,
+  //   })
+  //   .to("#fullscreen-button", { opacity: 1, duration: 0.8 }, "<30%")
+  //   .to("#custom-play-button", { opacity: 1, duration: 0.8 }, "<0%");
 
   //Heading & cta reveal
-  const headingRevealTl = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".section_big-title",
-      start: "top 60%",
-      end: "top 40%",
-    },
-  });
-
-  headingRevealTl
-    .to("h1 .line", {
-      opacity: 1,
-      duration: 1.4,
-      rotateX: 0,
-      transformOrigin: "center center",
-      y: "0%",
-      ease: "power4.out",
-      stagger: { each: 0.025 },
-    })
-    .to(
-      ".section_big-title .button",
-      {
-        opacity: 1,
-        duration: 0.6,
-        y: "0%",
-        ease: "power4out",
+  mm.add("(min-width: 992px)", () => {
+    const headingRevealTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".section_big-title",
+        start: "top 60%",
+        end: "top 40%",
       },
-      "<20%"
-    );
+    });
 
+    headingRevealTl
+      .to("h1 .line", {
+        opacity: 1,
+        duration: 1.4,
+        rotateX: 0,
+        transformOrigin: "center center",
+        y: "0%",
+        ease: "power4.out",
+        stagger: { each: 0.025 },
+      })
+      .to(
+        ".section_big-title .button_wrapper-inner",
+        {
+          opacity: 1,
+          duration: 0.6,
+          y: "0%",
+          ease: "power4out",
+        },
+        "<20%"
+      );
+  });
   //Work
   const workRevealTl = gsap.timeline({
     scrollTrigger: {
@@ -127,7 +148,7 @@ function pageAnimations() {
       0.6
     )
     .to(
-      ".section_work .button",
+      ".section_work .button_wrapper-inner",
       {
         opacity: 1,
         duration: 0.6,
@@ -167,7 +188,7 @@ function pageAnimations() {
       "<20%"
     )
     .to(
-      ".section_header .button",
+      ".section_header .button_wrapper-inner",
       {
         opacity: 1,
         duration: 0.6,
@@ -196,6 +217,9 @@ const navbar = document.querySelector(".navbar1_component");
 const mainWrapper = document.querySelector(".main-wrapper");
 // --- Vars
 const defaultEase = "power1.inOut";
+
+let animationHasRun = sessionStorage.getItem("animationHasRun");
+
 // ---- Initial initSet
 navbar.classList.remove("animate");
 const initSet = () => {
@@ -211,10 +235,13 @@ const initSet = () => {
   });
   tl.set(brand, { width: "100%" });
   tl.set(wrap, { width: "90vw" });
-  tl.set(mask, { width: "21%" });
+  !animationHasRun ? tl.set(mask, { width: "21%" }) : null;
   tl.set(logo, { width: "90vw" });
-  tl.to(mainWrapper, { opacity: 1, ease: defaultEase, duration: 1 }, "+=1");
-  tl.to(mask, { width: "auto", ease: "power4.out", duration: 2.6 }, "+=0.5");
+  tl.to(mainWrapper, { opacity: 1, ease: defaultEase, duration: 0.8 }, "+=.4");
+  !animationHasRun
+    ? tl.to(mask, { width: "auto", ease: "power4.out", duration: 2.2 }, "+=.4")
+    : null;
+  !animationHasRun ? sessionStorage.setItem("animationHasRun", true) : null;
   return tl;
 };
 const clearPros = (el) => {
@@ -232,20 +259,16 @@ function runAnimation() {
   mainLoad.add(initSet());
   // Desktop Version with Scroll
   if (width > 991) {
-    mainLoad.to(
-      navSpacer,
-      {
-        height: "auto",
-        marginBottom: "2.4em",
-        marginTop: "10.4em", // 8em of navbar + 2.4em from bottom of the logo
-        ease: "power4.out",
-        duration: 2,
-      },
-      "=+0.25"
-    );
+    mainLoad.to(navSpacer, {
+      height: "auto",
+      marginBottom: "2.4em",
+      marginTop: "10.4em", // 8em of navbar + 2.4em from bottom of the logo
+      ease: "power4.out",
+      duration: 1.4,
+    });
     mainLoad.to(
       navActions,
-      { opacity: 1, ease: "power3.out", duration: 1 },
+      { opacity: 1, ease: "power3.out", duration: 0.8 },
       "<"
     );
     mainLoad.set(navLogo, { translateY: "10.4em" });
@@ -256,7 +279,6 @@ function runAnimation() {
         opacity: 1,
       },
     });
-    mainLoad.then(initScroll).then(pageAnimations).then(footerReveal);
   }
   // Mobile Version without Scroll
   else {
@@ -268,7 +290,7 @@ function runAnimation() {
         opacity: 1,
       },
       ease: defaultEase,
-      duration: 1,
+      duration: 0.8,
     });
     mainLoad.to(
       wrap,
@@ -292,13 +314,17 @@ function runAnimation() {
       navbar.classList.add("animate");
     });
   }
-  mainLoad.to(navSpacer, { opacity: 0 });
-  mainLoad.to(mainWrapper, {
-    height: "auto",
-    ease: "power3.out",
-    duration: 0.1,
-  });
-  mainLoad.then(initScroll).then(pageAnimations).then(footerReveal);
+  mainLoad.to(navSpacer, { opacity: 0 }, "<0%");
+  mainLoad.to(
+    mainWrapper,
+    {
+      height: "auto",
+      ease: "power3.out",
+      duration: 0.1,
+    },
+    "<0%"
+  );
+  mainLoad.then(initScroll).then(pageAnimations);
 }
 runAnimation();
 
@@ -313,8 +339,10 @@ function initScroll() {
       ease: "linear",
     },
   });
-
-  tl1.to(navLogo, { translateY: "2.4em" });
+  const width = window.innerWidth;
+  if (width > 991) {
+    tl1.to(navLogo, { translateY: "2.4em" });
+  }
   tl1.to(
     navWrap,
     {
@@ -354,33 +382,4 @@ function initScroll() {
       },
     },
   });
-
-  function getMaxWidthForBreakpoint() {
-    const width = window.innerWidth;
-    if (width > 767) {
-      return "15rem";
-    }
-    if (width > 479) {
-      return "13rem";
-    }
-
-    if (width > 0) {
-      return "10rem";
-    }
-    return "17rem";
-  }
 }
-// ---- Resize Logic
-let resizeTimer;
-let previousWidth = window.innerWidth;
-
-window.addEventListener("resize", function () {
-  let currentWidth = window.innerWidth;
-  if (currentWidth !== previousWidth) {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function () {
-      window.location.reload();
-    }, 300);
-  }
-  previousWidth = currentWidth; // Update the previous width for the next resize event
-});

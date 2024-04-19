@@ -33,12 +33,31 @@ document.addEventListener("DOMContentLoaded", () => {
         duration: 0.8,
         ease: "expo.out",
       })
-      .to(loaderWrap, {
-        delay: 0.4,
+      .to(loaderLogo, {
+        y: "-100%",
         opacity: 0,
         duration: 0.6,
-        onComplete: pageLoadTl,
-      });
+        ease: "expo.in",
+      })
+      .to(
+        ".loader3_background",
+        {
+          "--loader-second-color": "rgba(242, 151, 237, 0)",
+          duration: 0.5,
+          ease: "expo.out",
+        },
+        "<70%"
+      )
+      .to(
+        ".loader3_background",
+        {
+          y: "-100%",
+          duration: 0.6,
+          ease: "expo.out",
+          onComplete: pageLoadTl,
+        },
+        "<30%"
+      );
   }
   loaderSimple();
 
@@ -48,37 +67,41 @@ document.addEventListener("DOMContentLoaded", () => {
     heroLoadTl
       .to(".wave-text .word", {
         opacity: 1,
-        duration: 1,
+        duration: 0.7,
         y: "0%",
         rotateX: 0,
         transformOrigin: "center center",
         ease: "power4.out",
       })
-      .to(".wave-title-container", {
-        delay: 0.2,
-        "--col2": "1fr",
-        duration: 3,
-        ease: "power4.out",
-      })
+      .to(
+        ".wave-title-container",
+        {
+          //delay: 0.1,
+          "--col2": "1fr",
+          duration: 2.2,
+          ease: "power4.out",
+        },
+        "<90%"
+      )
       .to(
         ".section_work-hero h1 .line",
         {
           opacity: 1,
-          duration: 1.4,
+          duration: 1,
           rotateX: 0,
           transformOrigin: "center center",
           y: "0%",
           ease: "power4.out",
           stagger: { each: 0.025 },
         },
-        "<20%"
+        "<10%"
       )
       .to(
         ".filter_component",
         {
           opacity: 1,
           y: "0%",
-          duration: 1,
+          duration: 0.8,
         },
         "<0%"
       )
@@ -87,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
         {
           opacity: 1,
           y: "0%",
-          duration: 1,
+          duration: 0.8,
           stagger: { each: 0.05 },
         },
         "<30%"
@@ -97,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
         {
           opacity: 1,
           y: "0%",
-          duration: 1,
+          duration: 0.8,
         },
         "<0%"
       );

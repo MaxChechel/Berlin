@@ -3,16 +3,16 @@ import ScrollTrigger from "gsap/src/ScrollTrigger";
 import { Draggable } from "gsap/all";
 import SplitType from "split-type";
 
-gsap.registerPlugin(ScrollTrigger, Draggable);
+gsap.registerPlugin(ScrollTrigger);
 
-document.addEventListener("DOMContentLoaded", () => {
+imagesLoaded(".page-wrapper", () => {
   const splittWords = new SplitType(
-    ".wave-text, .section_hero-about h1, .about_heading, .section_layout-shop h2, .values-container h4, .section_values h3, .section_values h4, .section_team h3, .section_team .heading-style-h4, .section_jobs h3, .section_clients h3",
+    ".wave-text, .section_hero-about h1, .about_heading, .section_layout-shop h2, .values-container h4, .section_values h3, .section_values h4, .section_team h3, .section_team p.heading-style-h4, .section_jobs h3, .section_clients h3",
     {
       types: "lines, words",
     }
   );
-  const splitChars = new SplitType("[data-text-fade-in]", {
+  const splitChars = new SplitType("[data-text-fade-in] span", {
     types: "lines, words, chars",
   });
 
@@ -122,6 +122,14 @@ document.addEventListener("DOMContentLoaded", () => {
           duration: 1,
         },
         "<0%"
+      )
+      .to(
+        ".section_text",
+        {
+          opacity: 1,
+          duration: 0.6,
+        },
+        "<0%"
       );
   }
 
@@ -132,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
       scrollTrigger: {
         trigger: text,
         start: "top 70%",
-        end: "top 40%",
+        end: "bottom 90%",
         scrub: 1.1,
       },
     });
@@ -177,48 +185,30 @@ document.addEventListener("DOMContentLoaded", () => {
   //Shop
   const shopTl = gsap.timeline({
     scrollTrigger: {
-      trigger: ".section_layout-shop",
+      trigger: ".section_social",
       start: "top 60%",
       end: "top 40%",
     },
   });
   shopTl
-    .to(".section_layout-shop img", {
+    .to(".section_social h4", {
       opacity: 1,
+      duration: 0.8,
+      rotateZ: 0,
+      transformOrigin: "left top",
       y: "0%",
-      scale: 1,
-      duration: 1.4,
     })
     .to(
-      ".section_layout-shop p",
+      ".section_social .social_button-row a",
       {
         opacity: 1,
         duration: 0.8,
-        rotateZ: 0,
-        transformOrigin: "left top",
-        y: "0%",
-      },
-      0
-    )
-    .to(
-      ".section_layout-shop h2 .line",
-      {
-        opacity: 1,
-        duration: 0.8,
-        rotateZ: 0,
+        rotateX: 0,
         transformOrigin: "left top",
         y: "0%",
         stagger: { each: 0.025 },
       },
-      "<0%"
-    )
-    .to(
-      ".section_layout-shop .button-group",
-      {
-        opacity: 1,
-        duration: 0.8,
-      },
-      "<80%"
+      "<20%"
     );
 
   //Values
@@ -319,7 +309,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   });
   teamTl
-    .to(".section_team h3 .word", {
+    .to(".section_team h3 .line", {
       opacity: 1,
       duration: 0.8,
       rotateZ: 0,
@@ -328,7 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
       stagger: { each: 0.025 },
     })
     .to(
-      ".section_team .heading-style-h4 .line",
+      ".section_team p.heading-style-h4 .line",
       {
         opacity: 1,
         duration: 0.8,
@@ -377,7 +367,7 @@ document.addEventListener("DOMContentLoaded", () => {
       end: "top 40%",
     },
   });
-  jobsTl
+  clientsTl
     .to(".section_clients h3 .word", {
       opacity: 1,
       duration: 0.8,
@@ -391,7 +381,7 @@ document.addEventListener("DOMContentLoaded", () => {
       {
         opacity: 1,
         duration: 0.8,
-        stagger: { each: 0.025, from: "random" },
+        stagger: { each: 0.015, from: "random" },
       },
       "<20%"
     );

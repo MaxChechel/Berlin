@@ -19,55 +19,48 @@ function wrapLines(selector) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const splittWords = new SplitType(".wave-text, .section_work-hero h1", {
-    types: "lines, words",
-  });
+  function singleUnderlineTitle(el) {
+    //Target first matched heading
+    const heading = el.querySelector("h1, h2, h3, h4, h5, h6");
+    //Split heading into lines and words
+    const text = new SplitType(heading, { types: "lines, words" });
 
-  wrapLines(".section_work-hero h1 .line");
+    //Wrap words into 1 parent span
+    text.lines.forEach((line) => {
+      const wrapEl = document.createElement("div");
+      wrapEl.classList = "overflow-hidden";
+      line.parentNode.appendChild(wrapEl);
+      wrapEl.appendChild(line);
+    });
 
-  function underlineTitle(target) {
-    target = document.querySelectorAll(target);
-    target.forEach((el) => {
-      //Target first matched heading
-      const heading = el.querySelector("h1, h2, h3, h4, h5, h6");
-      //Split heading into lines and words
-      const text = new SplitType(heading, { types: "lines, words" });
-
-      //Wrap words into 1 parent span
-      text.lines.forEach((line) => {
-        const wrapEl = document.createElement("div");
-        wrapEl.classList = "overflow-hidden";
-        line.parentNode.appendChild(wrapEl);
-        wrapEl.appendChild(line);
-
-        const wrapperSpan = document.createElement("span");
-        const words = line.querySelectorAll(".word");
-        words.forEach((word) => {
-          wrapperSpan.appendChild(word);
-        });
-        line.innerHTML = "";
-        line.appendChild(wrapperSpan);
+    el.addEventListener("mouseenter", () => {
+      gsap.to(heading.querySelectorAll(".line"), {
+        "--line-width": "100%",
+        ease: "power3.out",
+        duration: 0.6,
+        stagger: { each: 0.1 },
       });
-
-      el.addEventListener("mouseenter", () => {
-        gsap.to(heading.querySelectorAll(".line span"), {
-          "--line-width": "100%",
-          ease: "power3.out",
-          duration: 0.6,
-          stagger: { each: 0.1 },
-        });
-      });
-      el.addEventListener("mouseleave", () => {
-        gsap.to(heading.querySelectorAll(".line span"), {
-          "--line-width": "0%",
-          duration: 0.6,
-          stagger: { each: 0.1 },
-        });
+    });
+    el.addEventListener("mouseleave", () => {
+      gsap.to(heading.querySelectorAll(".line"), {
+        "--line-width": "0%",
+        duration: 0.6,
+        stagger: { each: 0.1 },
       });
     });
   }
 
-  underlineTitle(".featured-container");
+  function underlineTitle(target) {
+    target = document.querySelectorAll(target);
+    target.forEach((el) => {
+      singleUnderlineTitle(el);
+    });
+  }
+
+  underlineTitle(".featured-item");
+  underlineTitle(".latest-card");
+
+  gsap.set(".latest-grid-item", { opacity: 0 });
 
   function loaderSimple() {
     const loaderWrap = document.querySelector(".loader-page_component");
@@ -86,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
         delay: 0.4,
         opacity: 0,
         duration: 0.6,
-        onComplete: windowHeight > 840 ? pageLoadTl : pageLoadSmallTl,
+        onComplete: windowHeight > 640 ? pageLoadTl : pageLoadSmallTl,
       });
   }
   loaderSimple();
@@ -95,14 +88,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const heroLoadTl = gsap.timeline();
 
     heroLoadTl
-      .to(".featured-image", {
+      .to(".featured-item", {
         opacity: 1,
         y: "0%",
-        scale: 1,
         duration: 1.5,
       })
       .to(
-        ".featured-title .text-style-allcaps",
+        ".latest-home_featured-image-2",
+        {
+          opacity: 1,
+          y: "0%",
+          scale: 1,
+          duration: 1.5,
+        },
+        "<10%"
+      )
+      .to(
+        ".featured-item .heading-body-20",
         {
           opacity: 1,
           duration: 0.8,
@@ -110,10 +112,21 @@ document.addEventListener("DOMContentLoaded", () => {
           transformOrigin: "left top",
           y: "0%",
         },
-        "<20%"
+        "<10%"
       )
       .to(
-        ".latest-title .line",
+        ".featured-item .heading-body-18",
+        {
+          opacity: 1,
+          duration: 0.8,
+          rotateZ: 0,
+          transformOrigin: "left top",
+          y: "0%",
+        },
+        "<10%"
+      )
+      .to(
+        ".featured-item_title .line",
         {
           opacity: 1,
           duration: 0.8,
@@ -122,18 +135,10 @@ document.addEventListener("DOMContentLoaded", () => {
           y: "0%",
           stagger: { each: 0.025 },
         },
-        "<20%"
+        "<10%"
       )
       .to(
-        ".image-overlay",
-        {
-          display: "block",
-          duration: 0,
-        },
-        "<50%"
-      )
-      .to(
-        ".featured-latest-item",
+        ".featured-item",
         {
           pointerEvents: "all",
           duration: 0,
@@ -149,11 +154,15 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         "<0%"
       )
-      .to(".latest-grid-item", {
-        opacity: 1,
-        duration: 1,
-        stagger: { each: 0.05 },
-      })
+      .to(
+        ".latest-grid-item",
+        {
+          opacity: 1,
+          duration: 1,
+          stagger: { each: 0.05 },
+        },
+        "<50%"
+      )
       .to(
         ".navbar1_component",
         {
@@ -168,14 +177,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const heroLoadTl = gsap.timeline();
 
     heroLoadTl
-      .to(".featured-image", {
+      .to(".featured-item", {
         opacity: 1,
         y: "0%",
-        scale: 1,
         duration: 1.5,
       })
       .to(
-        ".featured-title .text-style-allcaps",
+        ".latest-home_featured-image-2",
+        {
+          opacity: 1,
+          y: "0%",
+          scale: 1,
+          duration: 1.5,
+        },
+        "<10%"
+      )
+      .to(
+        ".featured-item .heading-body-20",
         {
           opacity: 1,
           duration: 0.8,
@@ -183,10 +201,21 @@ document.addEventListener("DOMContentLoaded", () => {
           transformOrigin: "left top",
           y: "0%",
         },
-        "<20%"
+        "<10%"
       )
       .to(
-        ".latest-title .line",
+        ".featured-item .heading-body-18",
+        {
+          opacity: 1,
+          duration: 0.8,
+          rotateZ: 0,
+          transformOrigin: "left top",
+          y: "0%",
+        },
+        "<10%"
+      )
+      .to(
+        ".featured-item_title .line",
         {
           opacity: 1,
           duration: 0.8,
@@ -195,18 +224,10 @@ document.addEventListener("DOMContentLoaded", () => {
           y: "0%",
           stagger: { each: 0.025 },
         },
-        "<20%"
+        "<10%"
       )
       .to(
-        ".image-overlay",
-        {
-          display: "block",
-          duration: 0,
-        },
-        "<50%"
-      )
-      .to(
-        ".featured-latest-item",
+        ".featured-item",
         {
           pointerEvents: "all",
           duration: 0,
@@ -234,7 +255,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
   }
 
-  if (windowHeight < 840) {
+  if (windowHeight < 640) {
     const latestCards = document.querySelectorAll(".latest-grid-item");
     gsap.set([latestCards, ".pagination"], {
       opacity: 0,
@@ -264,4 +285,36 @@ document.addEventListener("DOMContentLoaded", () => {
       duration: 1,
     });
   }
+
+  //Mutation observer for new loaded items
+  const cardsList = document.querySelector(".latest-grid-list");
+
+  const observer = new MutationObserver((mutationsList, observer) => {
+    for (const mutation of mutationsList) {
+      if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
+        mutation.addedNodes.forEach((node) => {
+          // Check if the added node is the type of element you want to animate
+          if (
+            node.nodeType === 1 &&
+            node.classList.contains("latest-grid-item")
+          ) {
+            //Animations
+            const card = node.querySelector(".latest-card");
+            singleUnderlineTitle(card);
+          }
+        });
+      }
+    }
+  });
+  window.fsAttributes = window.fsAttributes || [];
+  window.fsAttributes.push([
+    "cmsload",
+    (listInstances) => {
+      console.log("cmsload Successfully loaded!");
+      observer.observe(cardsList, {
+        childList: true,
+        subtree: true,
+      });
+    },
+  ]);
 });
